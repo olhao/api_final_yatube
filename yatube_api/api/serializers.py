@@ -2,7 +2,6 @@ from rest_framework import serializers
 from rest_framework.fields import CurrentUserDefault
 from rest_framework.relations import SlugRelatedField
 from rest_framework.validators import UniqueTogetherValidator, UniqueValidator
-from rest_framework import status
 
 from posts.models import Comment, Follow, Group, Post, User
 
@@ -46,12 +45,15 @@ class FollowSerializer(serializers.ModelSerializer):
 
     following = SlugRelatedField(slug_field='username',
                                  queryset=User.objects.all(),
-                                 validators=[UniqueValidator(queryset=User.objects.all())])
+                                 validators=[UniqueValidator(
+                                     queryset=User.objects.all())])
 
-    '''def validation(self, data):
-        if data['following'] == data['user']:
-            raise serializers.ValidationError("Поля user и following не могут быть одинаковыми.")
-        return data'''
+    def validate_following(self, value):
+        user = self.context.get("request").user
+        if value == user:
+            raise serializers.ValidationError(
+                'Поля user и following не могут быть одинаковыми.')
+        return value
 
     class Meta:
         fields = ('user', 'following')

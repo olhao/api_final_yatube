@@ -1,14 +1,14 @@
 from django.shortcuts import get_object_or_404
-from rest_framework_simplejwt.authentication import JWTAuthentication
-from rest_framework.exceptions import PermissionDenied
-from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
-from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
-from rest_framework.response import Response
-from rest_framework import status
 from rest_framework import filters
+from rest_framework.exceptions import PermissionDenied
+from rest_framework.permissions import (IsAuthenticated,
+                                        IsAuthenticatedOrReadOnly)
+from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from posts.models import Comment, Follow, Group, Post, User
-from .serializers import (CommentSerializer, GroupSerializer, FollowSerializer, PostSerializer, UserSerializer)
+from .serializers import (CommentSerializer, FollowSerializer, GroupSerializer,
+                          PostSerializer, UserSerializer)
 
 
 class UserViewSet(ModelViewSet):
@@ -43,12 +43,14 @@ class PostViewSet(ModelViewSet):
 
     def perform_update(self, serializer):
         if serializer.instance.author != self.request.user:
-            raise PermissionDenied('У вас недостаточно прав для выполнения данного действия.')
+            raise PermissionDenied(
+                'У вас недостаточно прав для выполнения данного действия.')
         super(PostViewSet, self).perform_update(serializer)
 
     def perform_destroy(self, instance):
         if instance.author != self.request.user:
-            raise PermissionDenied('У вас недостаточно прав для выполнения данного действия.')
+            raise PermissionDenied(
+                'У вас недостаточно прав для выполнения данного действия.')
         super(PostViewSet, self).perform_destroy(instance)
 
 
@@ -73,12 +75,14 @@ class CommentViewSet(ModelViewSet):
 
     def perform_update(self, serializer):
         if serializer.instance.author != self.request.user:
-            raise PermissionDenied('У вас недостаточно прав для выполнения данного действия.')
+            raise PermissionDenied(
+                'У вас недостаточно прав для выполнения данного действия.')
         super(CommentViewSet, self).perform_update(serializer)
 
     def perform_destroy(self, instance):
         if instance.author != self.request.user:
-            raise PermissionDenied('У вас недостаточно прав для выполнения данного действия.')
+            raise PermissionDenied(
+                'У вас недостаточно прав для выполнения данного действия.')
         super(CommentViewSet, self).perform_destroy(instance)
 
 
@@ -90,20 +94,16 @@ class FollowViewSet(ModelViewSet):
     filter_backends = [filters.SearchFilter]
     search_fields = ['following__username']
 
+    def get_object(self):
+        obj = get_object_or_404(Follow, id=self.kwargs['pk'])
+        self.check_object_permissions(self.request, obj)
+        return obj
+
     def get_queryset(self):
         user = self.request.user
         return Follow.objects.filter(user=user)
 
     def perform_create(self, serializer):
-        following = serializer.validated_data['following']
-        # get_object_or_404(User, username=self.request.data.get('username'))
         user = self.request.user
-        if following == user:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        else:
-            serializer.save(user=user, following=following)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-    '''def perform_create(self, serializer):
-        user = self.request.user
-        serializer.save(user=user)'''
+        if serializer.is_valid():
+            serializer.save(user=user)
