@@ -49,7 +49,7 @@ class FollowSerializer(serializers.ModelSerializer):
                                      queryset=User.objects.all())])
 
     def validate_following(self, value):
-        user = self.context.get("request").user
+        user = self.context.get('request').user
         if value == user:
             raise serializers.ValidationError(
                 'Поля user и following не могут быть одинаковыми.')
