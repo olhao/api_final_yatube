@@ -34,8 +34,9 @@ class CommentSerializer(serializers.ModelSerializer):
                             slug_field='id')
 
     class Meta:
-        fields = '__all__'
+        fields = ('id', 'author', 'text', 'created', 'post')
         model = Comment
+
 
 
 class FollowSerializer(serializers.ModelSerializer):

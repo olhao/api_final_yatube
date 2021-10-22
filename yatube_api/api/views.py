@@ -22,7 +22,7 @@ class GroupViewSet(ReadOnlyModelViewSet):
     permission_classes = [IsAuthenticatedOrReadOnly]
 
     def get_object(self):
-        obj = get_object_or_404(Group, id=self.kwargs['pk'])
+        obj = get_object_or_404(Group, id=self.kwargs.get('pk'))
         self.check_object_permissions(self.request, obj)
         return obj
 
@@ -39,7 +39,7 @@ class PostViewSet(ModelViewSet):
         return super().get_permissions()
 
     def get_object(self):
-        obj = get_object_or_404(Post, id=self.kwargs['pk'])
+        obj = get_object_or_404(Post, id=self.kwargs.get('pk'))
         self.check_object_permissions(self.request, obj)
         return obj
 
@@ -58,16 +58,16 @@ class CommentViewSet(ModelViewSet):
         return super().get_permissions()
 
     def get_object(self):
-        obj = get_object_or_404(Comment, id=self.kwargs['pk'])
+        obj = get_object_or_404(Comment, id=self.kwargs.get('pk'))
         self.check_object_permissions(self.request, obj)
         return obj
 
     def get_queryset(self):
-        post = get_object_or_404(Post, id=self.kwargs['post_pk'])
+        post = get_object_or_404(Post, id=self.kwargs.get('post_pk'))
         return post.comments.all()
 
     def perform_create(self, serializer):
-        post = get_object_or_404(Post, id=self.kwargs['post_pk'])
+        post = get_object_or_404(Post, id=self.kwargs.get('post_pk'))
         serializer.save(author=self.request.user, post=post)
 
 
@@ -79,7 +79,7 @@ class FollowViewSet(ModelViewSet):
     search_fields = ['following__username', 'user__username']
 
     def get_object(self):
-        obj = get_object_or_404(Follow, id=self.kwargs['pk'])
+        obj = get_object_or_404(Follow, id=self.kwargs.get('pk'))
         self.check_object_permissions(self.request, obj)
         return obj
 

@@ -10,10 +10,10 @@ The main idea of the api_final_yatube is:
 > * to get group/groups with IsAuthenticatedOrReadOnly permission;
 > * to follow user, get list of followings and perform search with following name with IsAuthenticated permission.
 
- 
+
 ### setup and run 🛠 :
 ***
-clone the repo and CD in CLI 📨
+clone the repo and CD in CLI 
 ```
 git clone https://github.com/olhao/api_final_yatube.git
 ```
@@ -21,7 +21,7 @@ git clone https://github.com/olhao/api_final_yatube.git
 cd api_final_yatube
 ```
 
-create and activate virtual environment 🏡
+create and activate virtual environment 
 ```
 python -m venv env
 ```
@@ -32,12 +32,12 @@ source env/bin/activate
 python -m pip install --upgrade pip
 ```
 
-setup dependences from file requirements.txt 📨
+setup dependences from file requirements.txt 
 ```
 pip install -r requirements.txt
 ```
 
-perform migrations 📩
+perform migrations 
 ```
 python manage.py makemigrations
 ```
@@ -45,7 +45,7 @@ python manage.py makemigrations
 python manage.py migrate
 ```
 
-run the project 😃 🎉
+run the project 
 ```
 python manage.py runserver
 ```
