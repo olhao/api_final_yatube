@@ -106,7 +106,11 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS':
         'rest_framework.pagination.LimitOffsetPagination',
     'DEFAULT_FILTER_BACKENDS':
-        ('django_filters.rest_framework.DjangoFilterBackend',)
+        ('django_filters.rest_framework.DjangoFilterBackend',),
+
+    'DEFAULT_VERSIONING_CLASS': 'rest_framework.versioning.QueryParameterVersioning',
+    #  "DEFAULT_VERSION": "v1",
+    'VERSION_PARAM': 'v1',
 }
 
 SIMPLE_JWT = {
