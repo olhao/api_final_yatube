@@ -6,7 +6,7 @@ from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from posts.models import Group, Post, User
-from .permissions import OwnerOrReadOnly, ReadOnly
+from .permissions import OwnerOrReadOnly
 from .serializers import (CommentSerializer, FollowSerializer, GroupSerializer,
                           PostSerializer, UserSerializer)
 
@@ -28,15 +28,6 @@ class PostViewSet(ModelViewSet):
     permission_classes = (OwnerOrReadOnly,)
     authentication_classes = (JWTAuthentication,)
 
-    '''😊 без get_permissions пост запросы на
-        определенный пост будет возвращать 403 ошибку,
-        с пермишином можно запрашивать пост по id -
-        и получить информацию о посте.'''
-    def get_permissions(self):
-        if self.action == 'retrieve':
-            return (ReadOnly(),)
-        return super().get_permissions()
-
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
 
@@ -45,11 +36,6 @@ class CommentViewSet(ModelViewSet):
     serializer_class = CommentSerializer
     permission_classes = (OwnerOrReadOnly,)
     authentication_classes = (JWTAuthentication,)
-
-    def get_permissions(self):
-        if self.action == 'retrieve':
-            return (ReadOnly(),)
-        return super().get_permissions()
 
     def get_queryset(self):
         post = get_object_or_404(Post, id=self.kwargs.get('post_pk'))
